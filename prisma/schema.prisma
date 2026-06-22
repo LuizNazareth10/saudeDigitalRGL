@@ -1,0 +1,86 @@
+// Prisma schema — Seguros Digital RGL (Neon PostgreSQL)
+// Execute: npx prisma generate && npx prisma db push && npm run prisma:seed
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  operador
+  gestor
+  admin
+}
+
+enum Device {
+  mobile
+  desktop
+  tablet
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String
+  password  String // hash (bcrypt/argon2)
+  role      Role     @default(operador)
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+}
+
+/// Lead — identificação inicial da jornada.
+model Lead {
+  id        String   @id @default(cuid())
+  name      String
+  phone     String
+  createdAt DateTime @default(now())
+  budget    Budget?
+}
+
+/// Budget — orçamento/jornada completa associada a um lead.
+model Budget {
+  id        String  @id @default(cuid())
+  lead      Lead    @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  leadId    String  @unique
+
+  // Jornada
+  journey          Json // estado completo das telas
+  completedJourney Boolean @default(false)
+  journeyDuration  Int? // segundos
+  firstActionAt    DateTime?
+  lastActionAt     DateTime?
+
+  // Localização
+  city         String
+  neighborhood String?
+  uf           String  @default("MG")
+  lat          Float?
+  lng          Float?
+
+  // Dados do beneficiário/contrato
+  leadAge       Int?
+  contractType  String? // individual | familiar
+  beneficiaries Json? // [{ age, type }]
+
+  // Dispositivo / origem
+  device      Device  @default(desktop)
+  browser     String?
+  os          String?
+
+  // Resultado
+  selectedPlan     String?
+  selectedOperator String?
+  selectedPrice    Float?
+  plans            Json? // ranking completo retornado
+
+  // Proposta (sem dados de venda — receita oculta nesta versão)
+  proposalGenerated Boolean @default(false)
+  proposalSentAt    DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

@@ -1,0 +1,72 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: 248 250 252;          /* slate-50 */
+  --surface: 255 255 255;
+  --border: 226 232 240;      /* slate-200 */
+  --text: 15 23 42;           /* slate-900 */
+  --muted: 100 116 139;       /* slate-500 */
+  --faint: 148 163 184;       /* slate-400 */
+  --glass: 255 255 255;
+  --grid: 226 232 240;
+}
+
+.dark {
+  --bg: 2 6 23;               /* slate-950 */
+  --surface: 15 23 42;        /* slate-900 */
+  --border: 30 41 59;         /* slate-800 */
+  --text: 241 245 249;        /* slate-100 */
+  --muted: 148 163 184;       /* slate-400 */
+  --faint: 100 116 139;       /* slate-500 */
+  --glass: 255 255 255;
+  --grid: 30 41 59;
+}
+
+@layer base {
+  * { border-color: rgb(var(--border)); }
+  body {
+    background-color: rgb(var(--bg));
+    color: rgb(var(--text));
+    font-feature-settings: "cv11", "ss01";
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  ::selection { background: rgba(16, 185, 129, 0.25); }
+}
+
+@layer components {
+  .surface { background-color: rgb(var(--surface)); border: 1px solid rgb(var(--border)); }
+  .glass {
+    background-color: rgb(var(--glass) / 0.06);
+    border: 1px solid rgb(var(--glass) / 0.12);
+    backdrop-filter: blur(16px);
+  }
+  .dark .glass { background-color: rgb(255 255 255 / 0.05); }
+  :not(.dark) .glass { background-color: rgb(255 255 255 / 0.7); border-color: rgb(var(--border)); }
+
+  .text-muted { color: rgb(var(--muted)); }
+  .text-faint { color: rgb(var(--faint)); }
+
+  .brand-gradient { background: linear-gradient(135deg, #10b981, #06b6d4); }
+  .brand-text {
+    background: linear-gradient(135deg, #10b981, #06b6d4);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .skeleton {
+    background: linear-gradient(90deg, rgba(148,163,184,.10) 25%, rgba(148,163,184,.22) 37%, rgba(148,163,184,.10) 63%);
+    background-size: 800px 100%;
+    animation: shimmer 1.4s linear infinite;
+  }
+}
+
+/* Mapa Leaflet — borda arredondada e tema escuro neutro */
+.leaflet-container { background: rgb(var(--surface)); border-radius: 1rem; font-family: inherit; }
+.dark .leaflet-tile { filter: brightness(0.7) invert(0.92) contrast(0.9) hue-rotate(180deg) saturate(0.5); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}

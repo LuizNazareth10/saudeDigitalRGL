@@ -1,0 +1,10 @@
+{
+  "name": "Seguros Digital RGL",
+  "short_name": "RGL Saúde",
+  "description": "Simulador de planos de saúde — região de Juiz de Fora / MG",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#020617",
+  "theme_color": "#10b981",
+  "icons": [{ "src": "/logo.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }]
+}
