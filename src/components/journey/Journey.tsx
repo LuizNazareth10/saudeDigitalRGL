@@ -31,16 +31,22 @@ export function Journey() {
   const goNext = () => {
     if (state.step === 6) {
       setComputing(true);
-      addLead({
+      const newLead = {
         id: "L" + Math.floor(Math.random() * 90000 + 9000),
         name: state.name, phone: state.phone, city: state.city, uf: state.uf, neighborhood: "—",
         age: state.beneficiaries[0]?.age || 0,
         browser: typeof navigator !== "undefined" ? navigator.userAgent.split(/[ /]/)[0] || "Web" : "Web",
-        os: "Web", device: "desktop",
+        os: "Web", device: "desktop" as const,
         step: 7, completed: true, proposalGenerated: true,
         selectedPlan: null, selectedOperator: null, selectedPrice: null,
         durationSec: 95, createdAt: new Date().toISOString(),
-      });
+      };
+      addLead(newLead);
+      fetch("/api/leads", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newLead),
+      }).catch(() => {});
       setTimeout(() => { setComputing(false); next(); }, 950);
     } else next();
   };

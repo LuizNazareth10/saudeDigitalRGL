@@ -1,18 +1,39 @@
 "use client";
 import * as React from "react";
 import type { Lead } from "@/types";
-import { generateLeads } from "@/lib/seed-leads";
 
 interface Store {
   leads: Lead[];
+  loading: boolean;
   addLead: (lead: Lead) => void;
+  refreshLeads: () => Promise<void>;
 }
-const StoreCtx = React.createContext<Store>({ leads: [], addLead: () => {} });
+const StoreCtx = React.createContext<Store>({ leads: [], loading: true, addLead: () => {}, refreshLeads: async () => {} });
 export const useStore = () => React.useContext(StoreCtx);
 
-/** Demo: leads em memória. Em produção, trocar por fetch /api/leads (Neon). */
 export function StoreProvider({ children }: { children: React.ReactNode }) {
-  const [leads, setLeads] = React.useState<Lead[]>(() => generateLeads());
+  const [leads, setLeads] = React.useState<Lead[]>([]);
+  const [loading, setLoading] = React.useState(true);
+
+  const refreshLeads = React.useCallback(async () => {
+    try {
+      const res = await fetch("/api/leads");
+      const data = await res.json();
+      setLeads(data.leads ?? []);
+    } catch {
+      // mantém leads atuais em caso de falha de rede
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  React.useEffect(() => { refreshLeads(); }, [refreshLeads]);
+
   const addLead = (lead: Lead) => setLeads((prev) => [lead, ...prev]);
-  return <StoreCtx.Provider value={{ leads, addLead }}>{children}</StoreCtx.Provider>;
+
+  return (
+    <StoreCtx.Provider value={{ leads, loading, addLead, refreshLeads }}>
+      {children}
+    </StoreCtx.Provider>
+  );
 }
