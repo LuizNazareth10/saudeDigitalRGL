@@ -36,8 +36,9 @@ export function Executive() {
 
   const byDay = React.useMemo(() => {
     const m: Record<string, { day: string; leads: number }> = {};
+    const today = new Date();
     for (let i = 13; i >= 0; i--) {
-      const d = new Date(2026, 5, 20 - i);
+      const d = new Date(today.getFullYear(), today.getMonth(), today.getDate() - i);
       m[d.toISOString().slice(0, 10)] = { day: `${d.getDate()}/${d.getMonth() + 1}`, leads: 0 };
     }
     leads.forEach((l) => { const k = l.createdAt.slice(0, 10); if (m[k]) m[k].leads++; });

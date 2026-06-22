@@ -12,7 +12,7 @@ function mulberry32(a: number) {
   };
 }
 
-const REF_DATE = new Date(2026, 5, 20); // referência das métricas
+const REF_DATE = new Date(); // hoje — base dinâmica para KPIs
 
 export function generateLeads(n = 168): Lead[] {
   const rng = mulberry32(20260620);
@@ -48,7 +48,8 @@ export function generateLeads(n = 168): Lead[] {
     const city = wpick(cities);
     const age = 18 + Math.floor(rng() * 55);
     const daysAgo = Math.floor(rng() * 30);
-    const created = new Date(2026, 5, 20 - daysAgo, Math.floor(rng() * 24), Math.floor(rng() * 60));
+    const now = new Date();
+    const created = new Date(now.getFullYear(), now.getMonth(), now.getDate() - daysAgo, Math.floor(rng() * 24), Math.floor(rng() * 60));
 
     let selPlan: string | null = null;
     let selOp: string | null = null;
