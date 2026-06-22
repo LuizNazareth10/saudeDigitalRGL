@@ -45,8 +45,15 @@ export async function GET() {
   return NextResponse.json({ leads });
 }
 
+type LeadPostBody = Partial<Lead> & {
+  contractType?: string;
+  beneficiaries?: { age: number; type: string }[];
+  plans?: unknown[];
+  matchScore?: number;
+};
+
 export async function POST(req: Request) {
-  const body: Partial<Lead> = await req.json().catch(() => null);
+  const body: LeadPostBody = await req.json().catch(() => null);
   if (!body?.name || !body?.phone) {
     return NextResponse.json({ error: "name e phone são obrigatórios" }, { status: 400 });
   }
@@ -57,19 +64,28 @@ export async function POST(req: Request) {
       phone: body.phone,
       budget: {
         create: {
-          journey: { step: body.step ?? 7 },
+          journey: {
+            step: body.step ?? 7,
+            city: body.city,
+            uf: body.uf,
+            contract: body.contractType,
+            beneficiaries: body.beneficiaries,
+          },
           completedJourney: body.completed ?? false,
           journeyDuration: body.durationSec ?? null,
           city: body.city ?? "—",
           neighborhood: body.neighborhood && body.neighborhood !== "—" ? body.neighborhood : null,
           uf: body.uf ?? "MG",
           leadAge: body.age || null,
+          contractType: body.contractType ?? null,
+          beneficiaries: body.beneficiaries ? (body.beneficiaries as object[]) : undefined,
           device: (body.device ?? "desktop") as "mobile" | "desktop" | "tablet",
           browser: body.browser ?? null,
           os: body.os ?? null,
           selectedPlan: body.selectedPlan ?? null,
           selectedOperator: body.selectedOperator ?? null,
           selectedPrice: body.selectedPrice ?? null,
+          plans: body.plans ? (body.plans as object[]) : undefined,
           proposalGenerated: body.proposalGenerated ?? false,
         },
       },

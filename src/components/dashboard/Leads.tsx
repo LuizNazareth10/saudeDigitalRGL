@@ -1,6 +1,6 @@
 "use client";
 import * as React from "react";
-import { Search, Download, CheckCircle2, Circle, Users } from "lucide-react";
+import { Search, Download, CheckCircle2, Circle, Users, RefreshCw } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -13,9 +13,18 @@ import type { Lead } from "@/types";
 type Filter = "todos" | "concluidas" | "abandonadas";
 
 export function Leads() {
-  const { leads } = useStore();
+  const { leads, refreshLeads, loading } = useStore();
   const [q, setQ] = React.useState("");
   const [filter, setFilter] = React.useState<Filter>("todos");
+  const [refreshing, setRefreshing] = React.useState(false);
+  const [lastRefresh, setLastRefresh] = React.useState<Date>(new Date());
+
+  const handleRefresh = React.useCallback(async () => {
+    setRefreshing(true);
+    await refreshLeads();
+    setLastRefresh(new Date());
+    setRefreshing(false);
+  }, [refreshLeads]);
 
   const filtered = React.useMemo(() => {
     return leads.filter((l) => {
@@ -60,13 +69,20 @@ export function Leads() {
               </button>
             ))}
           </div>
+          <Button variant="outline" size="sm" onClick={handleRefresh} disabled={refreshing}>
+            <RefreshCw className={cn("h-3.5 w-3.5", refreshing && "animate-spin")} />
+            {refreshing ? "Atualizando…" : "Atualizar"}
+          </Button>
           <Button variant="outline" size="sm" onClick={exportCSV}><Download className="h-3.5 w-3.5" /> CSV</Button>
         </div>
       </div>
 
-      <div className="rounded-lg border border-brand-500/20 bg-brand-500/5 px-4 py-2.5 text-xs text-muted">
-        <Users className="mr-1.5 inline h-3.5 w-3.5 text-brand-500" />
-        Todos os operadores visualizam todos os leads. Exibindo <strong>{filtered.length}</strong> de {leads.length}.
+      <div className="rounded-lg border border-brand-500/20 bg-brand-500/5 px-4 py-2.5 text-xs text-muted flex items-center justify-between">
+        <span>
+          <Users className="mr-1.5 inline h-3.5 w-3.5 text-brand-500" />
+          Todos os operadores visualizam todos os leads. Exibindo <strong>{filtered.length}</strong> de {leads.length}.
+        </span>
+        <span className="text-faint">Atualizado às {lastRefresh.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit", second: "2-digit" })}</span>
       </div>
 
       <Card className="overflow-hidden">
@@ -83,7 +99,7 @@ export function Leads() {
               </tr>
             </thead>
             <tbody>
-              {filtered.slice(0, 60).map((l: Lead) => (
+              {filtered.map((l: Lead) => (
                 <tr key={l.id} className="border-b transition last:border-0 hover:bg-black/[.02] dark:hover:bg-white/[.03]">
                   <td className="px-4 py-3">
                     <div className="font-medium">{l.name}</div>

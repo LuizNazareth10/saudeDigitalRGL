@@ -40,7 +40,7 @@ export function ResultSkeleton() {
 
 export function Result() {
   const { state } = useJourney();
-  const { addLead } = useStore();
+  const { addLead, refreshLeads } = useStore();
   const [open, setOpen] = React.useState<string | null>(null);
   const savedRef = React.useRef(false);
 
@@ -76,8 +76,16 @@ export function Result() {
     fetch("/api/leads", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(newLead),
-    }).catch(() => {});
+      body: JSON.stringify({
+        ...newLead,
+        contractType: state.contract,
+        beneficiaries: state.beneficiaries,
+        plans: recs,
+        matchScore: Math.round(top.score),
+      }),
+    })
+      .then((r) => { if (r.ok) refreshLeads(); })
+      .catch(() => {});
   }, [recs.length]);
 
   const chips: [string, any][] = [

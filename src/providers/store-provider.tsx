@@ -27,7 +27,16 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  React.useEffect(() => { refreshLeads(); }, [refreshLeads]);
+  React.useEffect(() => {
+    refreshLeads();
+    const onFocus = () => refreshLeads();
+    window.addEventListener("focus", onFocus);
+    const interval = setInterval(refreshLeads, 30_000);
+    return () => {
+      window.removeEventListener("focus", onFocus);
+      clearInterval(interval);
+    };
+  }, [refreshLeads]);
 
   const addLead = (lead: Lead) => setLeads((prev) => [lead, ...prev]);
 
