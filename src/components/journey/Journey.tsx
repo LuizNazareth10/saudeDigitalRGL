@@ -12,6 +12,8 @@ import { cn } from "@/lib/utils";
 import { Step1, Step2, Step3, Step4, Step5, Step6 } from "./steps";
 import { Result, ResultSkeleton } from "./Result";
 import { useJourney, TOTAL_STEPS } from "./JourneyProvider";
+import { CookieBanner } from "./CookieBanner";
+import type { GeoData } from "./CookieBanner";
 
 const STEPS = [
   { n: 1, label: "Identificação", icon: User },
@@ -24,7 +26,16 @@ const STEPS = [
 ];
 
 export function Journey() {
-  const { state, next, back, canAdvance, computing, setComputing } = useJourney();
+  const { state, set, next, back, canAdvance, computing, setComputing } = useJourney();
+
+  const handleGeo = (geo: GeoData | null) => {
+    if (!geo) return;
+    set({
+      lat: geo.lat,
+      lng: geo.lng,
+      ...(geo.neighborhood && { neighborhood: geo.neighborhood }),
+    });
+  };
 
   const goNext = () => {
     if (state.step === 6) {
@@ -35,6 +46,7 @@ export function Journey() {
 
   return (
     <div className="relative min-h-screen">
+      <CookieBanner onGeo={handleGeo} />
       <Mesh />
       <div className="relative z-10 border-b">
         <div className="mx-auto flex h-16 max-w-3xl items-center justify-between px-5">

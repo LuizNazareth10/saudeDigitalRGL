@@ -15,6 +15,9 @@ export interface JourneyState {
   coparticipation: Coparticipation | "";
   accommodation: Accommodation | "";
   hospitals: string[];
+  lat: number | null;
+  lng: number | null;
+  neighborhood: string | null;
 }
 
 const INITIAL: JourneyState = {
@@ -22,6 +25,7 @@ const INITIAL: JourneyState = {
   name: "", phone: "", city: "", uf: "MG",
   beneficiaries: [{ age: NaN, type: "titular" }],
   contract: "", coparticipation: "", accommodation: "", hospitals: [],
+  lat: null, lng: null, neighborhood: null,
 };
 
 interface JourneyApi {

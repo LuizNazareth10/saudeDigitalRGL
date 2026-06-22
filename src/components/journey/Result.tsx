@@ -61,7 +61,8 @@ export function Result() {
     const newLead = {
       id: "L" + Math.floor(Math.random() * 90000 + 9000),
       name: state.name, phone: state.phone,
-      city: state.city, uf: state.uf, neighborhood: "—",
+      city: state.city, uf: state.uf,
+      neighborhood: state.neighborhood ?? "—",
       age: state.beneficiaries[0]?.age || 0,
       browser: typeof navigator !== "undefined" ? navigator.userAgent.split(/[ /]/)[0] || "Web" : "Web",
       os: "Web", device: "desktop" as const,
@@ -82,6 +83,8 @@ export function Result() {
         beneficiaries: state.beneficiaries,
         plans: recs,
         matchScore: Math.round(top.score),
+        lat: state.lat ?? undefined,
+        lng: state.lng ?? undefined,
       }),
     })
       .then((r) => { if (r.ok) refreshLeads(); })

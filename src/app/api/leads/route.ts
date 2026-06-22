@@ -55,6 +55,8 @@ type LeadPostBody = Partial<Lead> & {
   beneficiaries?: { age: number; type: string }[];
   plans?: unknown[];
   matchScore?: number;
+  lat?: number;
+  lng?: number;
 };
 
 export async function POST(req: Request) {
@@ -85,6 +87,8 @@ export async function POST(req: Request) {
             leadAge: body.age || null,
             contractType: body.contractType ?? null,
             beneficiaries: body.beneficiaries ? (body.beneficiaries as object[]) : undefined,
+            lat: body.lat ?? null,
+            lng: body.lng ?? null,
             device: (body.device ?? "desktop") as "mobile" | "desktop" | "tablet",
             browser: body.browser ?? null,
             os: body.os ?? null,

@@ -1,15 +1,24 @@
 import { NextResponse } from "next/server";
 import { SignJWT } from "jose";
 import { verifyCredentials } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
 
-/**
- * POST /api/auth/login
- * Valida credenciais e devolve um JWT (jose) em cookie httpOnly.
- * Em produção, troque verifyCredentials por consulta ao banco com hash de senha.
- */
 export async function POST(req: Request) {
   const { email, password } = await req.json().catch(() => ({}));
-  const user = verifyCredentials(email ?? "", password ?? "");
+
+  // Check DB users first, fall back to SEED_USERS
+  let user = null;
+  try {
+    const dbUser = await prisma.user.findUnique({
+      where: { email: (email ?? "").trim().toLowerCase() },
+    });
+    if (dbUser && dbUser.active && dbUser.password === (password ?? "")) {
+      user = { email: dbUser.email, name: dbUser.name, role: dbUser.role as "operador" | "gestor" | "admin" };
+    }
+  } catch {
+    // DB unavailable — fall back to seed
+  }
+  if (!user) user = verifyCredentials(email ?? "", password ?? "");
   if (!user) {
     return NextResponse.json({ error: "Credenciais inválidas" }, { status: 401 });
   }

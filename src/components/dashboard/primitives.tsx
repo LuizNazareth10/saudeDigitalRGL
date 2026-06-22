@@ -17,8 +17,10 @@ export function useChartTheme() {
         border: `1px solid ${dark ? "#1e293b" : "#e2e8f0"}`,
         borderRadius: 12,
         fontSize: 12,
+        color: dark ? "#e2e8f0" : "#0f172a",
       },
       labelStyle: { color: dark ? "#94a3b8" : "#64748b" },
+      itemStyle: { color: dark ? "#e2e8f0" : "#0f172a" },
     },
   };
 }
