@@ -89,7 +89,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
             <button onClick={() => setOpen(true)} className="grid h-9 w-9 place-items-center rounded-lg border glass lg:hidden"><Menu className="h-4 w-4" /></button>
             <div>
               <h1 className="text-lg font-semibold tracking-tight">{current?.label ?? "Painel"}</h1>
-              <p className="hidden text-xs text-faint sm:block">Seguros Digital RGL · área restrita</p>
+              <p className="hidden text-xs text-faint sm:block">RGL Consultoria · área restrita</p>
             </div>
           </div>
           <div className="flex items-center gap-2">

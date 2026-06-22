@@ -7,16 +7,16 @@ const sans = Inter({ subsets: ["latin"], variable: "--font-sans", display: "swap
 const mono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mono", display: "swap" });
 
 export const metadata: Metadata = {
-  title: { default: "Seguros Digital RGL · Simulador de planos de saúde", template: "%s · Seguros Digital RGL" },
+  title: { default: "RGL Consultoria · Simulador de Planos de Saúde", template: "%s · RGL Consultoria" },
   description:
-    "Simule e compare planos de saúde das principais operadoras da região de Juiz de Fora / MG. Recomendação inteligente em menos de 2 minutos.",
-  applicationName: "Seguros Digital RGL",
+    "Simule e compare planos de saúde da Cedplan, Plasc, Unimed JF e Sul América. Recomendação personalizada em menos de 2 minutos — pela RGL Consultoria, Juiz de Fora/MG.",
+  applicationName: "RGL Consultoria",
   manifest: "/manifest.webmanifest",
   icons: { icon: "/favicon.svg" },
-  metadataBase: new URL("https://segurosdigital-rgl.com.br"),
+  metadataBase: new URL("https://segurosdigital-rgl.vercel.app"),
   openGraph: {
-    title: "Seguros Digital RGL",
-    description: "Encontre o plano de saúde certo para você na região de Juiz de Fora.",
+    title: "RGL Consultoria · Simulador de Planos de Saúde",
+    description: "Encontre o plano de saúde certo para você com a RGL Consultoria em Juiz de Fora / MG.",
     type: "website",
     locale: "pt_BR",
   },

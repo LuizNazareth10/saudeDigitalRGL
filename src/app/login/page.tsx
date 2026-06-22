@@ -44,7 +44,7 @@ export default function LoginPage() {
       <Card className="relative z-10 w-full max-w-md p-8">
         <Logo />
         <h1 className="mt-7 flex items-center gap-2 text-2xl font-semibold tracking-tight"><Lock className="h-5 w-5 text-brand-500" /> Área restrita</h1>
-        <p className="mt-1 text-sm text-muted">Acesso para operadores, gestores e administradores.</p>
+        <p className="mt-1 text-sm text-muted">RGL Consultoria — acesso para operadores, gestores e administradores.</p>
 
         <div className="mt-7 space-y-4">
           <label className="block">

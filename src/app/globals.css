@@ -2,28 +2,30 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ── Tokens de cor — RGL Consultoria ─────────────────────────────────────── */
 :root {
-  --bg: 248 250 252;          /* slate-50 */
+  --bg:      248 250 252;       /* slate-50 */
   --surface: 255 255 255;
-  --border: 226 232 240;      /* slate-200 */
-  --text: 15 23 42;           /* slate-900 */
-  --muted: 100 116 139;       /* slate-500 */
-  --faint: 148 163 184;       /* slate-400 */
-  --glass: 255 255 255;
-  --grid: 226 232 240;
+  --border:  226 232 240;       /* slate-200 */
+  --text:    15 23 42;          /* slate-900 */
+  --muted:   100 116 139;       /* slate-500 */
+  --faint:   148 163 184;       /* slate-400 */
+  --glass:   255 255 255;
+  --grid:    226 232 240;
 }
 
 .dark {
-  --bg: 2 6 23;               /* slate-950 */
-  --surface: 15 23 42;        /* slate-900 */
-  --border: 30 41 59;         /* slate-800 */
-  --text: 241 245 249;        /* slate-100 */
-  --muted: 148 163 184;       /* slate-400 */
-  --faint: 100 116 139;       /* slate-500 */
-  --glass: 255 255 255;
-  --grid: 30 41 59;
+  --bg:      2 12 18;           /* #020C12 — quase preto, tint teal */
+  --surface: 6 24 32;           /* #061820 — superfície teal-escuro */
+  --border:  12 48 64;          /* #0C3040 — borda teal sutil */
+  --text:    241 248 250;       /* teal-branco */
+  --muted:   148 163 184;       /* slate-400 */
+  --faint:   100 116 139;       /* slate-500 */
+  --glass:   255 255 255;
+  --grid:    12 48 64;
 }
 
+/* ── Base ─────────────────────────────────────────────────────────────────── */
 @layer base {
   * { border-color: rgb(var(--border)); }
   body {
@@ -33,39 +35,94 @@
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
   }
-  ::selection { background: rgba(16, 185, 129, 0.25); }
+  ::selection { background: rgba(20, 212, 200, 0.28); }
 }
 
+/* ── Componentes ──────────────────────────────────────────────────────────── */
 @layer components {
-  .surface { background-color: rgb(var(--surface)); border: 1px solid rgb(var(--border)); }
-  .glass {
-    background-color: rgb(var(--glass) / 0.06);
-    border: 1px solid rgb(var(--glass) / 0.12);
-    backdrop-filter: blur(16px);
+  .surface {
+    background-color: rgb(var(--surface));
+    border: 1px solid rgb(var(--border));
   }
-  .dark .glass { background-color: rgb(255 255 255 / 0.05); }
-  :not(.dark) .glass { background-color: rgb(255 255 255 / 0.7); border-color: rgb(var(--border)); }
+  .glass {
+    background-color: rgb(var(--glass) / 0.04);
+    border: 1px solid rgb(var(--glass) / 0.10);
+    backdrop-filter: blur(20px);
+  }
+  .dark .glass  { background-color: rgb(12 196 190 / 0.04); border-color: rgb(12 196 190 / 0.12); }
+  :not(.dark) .glass { background-color: rgb(255 255 255 / 0.70); border-color: rgb(var(--border)); }
 
   .text-muted { color: rgb(var(--muted)); }
   .text-faint { color: rgb(var(--faint)); }
 
-  .brand-gradient { background: linear-gradient(135deg, #10b981, #06b6d4); }
+  /* ── Gradiente da marca RGL: teal-escuro → ciano brilhante ── */
+  .brand-gradient {
+    background: linear-gradient(135deg, #0A7A8A 0%, #0CC4BE 55%, #14D4C8 100%);
+  }
+  .brand-gradient-h {
+    background: linear-gradient(90deg, #0A7A8A 0%, #14D4C8 100%);
+  }
   .brand-text {
-    background: linear-gradient(135deg, #10b981, #06b6d4);
+    background: linear-gradient(135deg, #0A7A8A 0%, #14D4C8 100%);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
   }
+
+  /* ── Glow teal — efeito premium ── */
+  .brand-glow {
+    box-shadow: 0 0 40px -8px rgba(20,212,200,0.40), 0 0 80px -20px rgba(10,122,138,0.30);
+  }
+
+  /* ── Card com borda teal ── */
+  .card-rgl {
+    background: rgb(var(--surface));
+    border: 1px solid rgb(var(--border));
+    position: relative;
+    overflow: hidden;
+  }
+  .dark .card-rgl::before {
+    content: "";
+    position: absolute;
+    inset-x: 0;
+    top: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(20,212,200,0.5), transparent);
+  }
+
+  /* ── Linha ECG decorativa ── */
+  .ecg-line {
+    background: linear-gradient(90deg, transparent 0%, #14D4C8 50%, transparent 100%);
+    height: 1px;
+    opacity: 0.35;
+  }
+
   .skeleton {
-    background: linear-gradient(90deg, rgba(148,163,184,.10) 25%, rgba(148,163,184,.22) 37%, rgba(148,163,184,.10) 63%);
+    background: linear-gradient(90deg,
+      rgba(12,196,190,.08) 25%,
+      rgba(20,212,200,.20) 37%,
+      rgba(12,196,190,.08) 63%
+    );
     background-size: 800px 100%;
     animation: shimmer 1.4s linear infinite;
   }
 }
 
-/* Mapa Leaflet — borda arredondada e tema escuro neutro */
-.leaflet-container { background: rgb(var(--surface)); border-radius: 1rem; font-family: inherit; }
-.dark .leaflet-tile { filter: brightness(0.7) invert(0.92) contrast(0.9) hue-rotate(180deg) saturate(0.5); }
+/* ── Mapa Leaflet ─────────────────────────────────────────────────────────── */
+.leaflet-container {
+  background: rgb(var(--surface));
+  border-radius: 1rem;
+  font-family: inherit;
+}
+.dark .leaflet-tile {
+  filter: brightness(0.7) invert(0.92) contrast(0.9) hue-rotate(175deg) saturate(0.4);
+}
+
+/* ── Scrollbar personalizada ──────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgb(12 196 190 / 0.25); border-radius: 999px; }
+::-webkit-scrollbar-thumb:hover { background: rgb(12 196 190 / 0.45); }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }

@@ -1,6 +1,6 @@
 import { Navbar } from "@/components/marketing/Navbar";
 import { Mesh } from "@/components/ui/mesh";
-import { Hero, HowItWorks, OperatorsSection, FinalCTA, Footer } from "@/components/marketing/sections";
+import { Hero, HowItWorks, OperatorsSection, TrustSection, FinalCTA, Footer } from "@/components/marketing/sections";
 
 export default function HomePage() {
   return (
@@ -12,6 +12,7 @@ export default function HomePage() {
           <Hero />
           <HowItWorks />
           <OperatorsSection />
+          <TrustSection />
           <FinalCTA />
         </main>
         <Footer />
