@@ -13,6 +13,7 @@ import { OPERATORS } from "@/lib/data/operators";
 import { HOSPITAL_MAP } from "@/lib/data/hospitals";
 import { recommend } from "@/lib/recommendation";
 import type { SimulationInput } from "@/types";
+import { useStore } from "@/providers/store-provider";
 import { useJourney } from "./JourneyProvider";
 
 export function ResultSkeleton() {
@@ -39,7 +40,9 @@ export function ResultSkeleton() {
 
 export function Result() {
   const { state } = useJourney();
+  const { addLead } = useStore();
   const [open, setOpen] = React.useState<string | null>(null);
+  const savedRef = React.useRef(false);
 
   const input: SimulationInput = {
     city: state.city, uf: state.uf,
@@ -50,6 +53,32 @@ export function Result() {
     hospitals: state.hospitals,
   };
   const recs = React.useMemo(() => recommend(input, 6), [JSON.stringify(input)]);
+
+  React.useEffect(() => {
+    if (savedRef.current || recs.length === 0 || !state.name) return;
+    savedRef.current = true;
+    const top = recs[0];
+    const newLead = {
+      id: "L" + Math.floor(Math.random() * 90000 + 9000),
+      name: state.name, phone: state.phone,
+      city: state.city, uf: state.uf, neighborhood: "—",
+      age: state.beneficiaries[0]?.age || 0,
+      browser: typeof navigator !== "undefined" ? navigator.userAgent.split(/[ /]/)[0] || "Web" : "Web",
+      os: "Web", device: "desktop" as const,
+      step: 7, completed: true, proposalGenerated: true,
+      selectedPlan: top.name,
+      selectedOperator: top.operator,
+      selectedPrice: Math.round(top.price),
+      durationSec: 95,
+      createdAt: new Date().toISOString(),
+    };
+    addLead(newLead);
+    fetch("/api/leads", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(newLead),
+    }).catch(() => {});
+  }, [recs.length]);
 
   const chips: [string, any][] = [
     [`${state.beneficiaries.length} beneficiário(s)`, Users],
