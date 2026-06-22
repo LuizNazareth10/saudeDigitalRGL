@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { ArrowRight, CheckCircle2, Zap, User, Hospital, Award } from "lucide-react";
+import { ArrowRight, CheckCircle2, Zap, User, Hospital, Award, Building2, LayoutGrid, Clock } from "lucide-react";
 import { Eyebrow } from "@/components/ui/eyebrow";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -32,10 +32,19 @@ export function Hero() {
         </div>
       </div>
       <div className="mt-14 grid animate-fadeUp grid-cols-2 gap-3 sm:grid-cols-4" style={{ animationDelay: ".3s" }}>
-        {[[String(OPERATOR_LIST.length), "operadoras"], ["8", "hospitais"], [String(PLANS.length), "planos"], ["~90s", "para simular"]].map(([n, l]) => (
-          <div key={l} className="glass rounded-2xl p-5">
-            <div className="font-mono text-3xl font-semibold tracking-tight text-brand-500">{n}</div>
-            <div className="mt-1 text-xs text-muted">{l}</div>
+        {[
+          { n: String(OPERATOR_LIST.length), l: "operadoras", ic: Building2 },
+          { n: "8", l: "hospitais", ic: Hospital },
+          { n: String(PLANS.length), l: "planos", ic: LayoutGrid },
+          { n: "~90s", l: "para simular", ic: Clock },
+        ].map(({ n, l, ic: Ic }) => (
+          <div key={l} className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] p-5 backdrop-blur-sm transition hover:border-brand-500/40 hover:bg-white/[0.07]">
+            <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-brand-500/50 to-transparent" />
+            <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-xl border border-brand-500/20 bg-brand-500/10">
+              <Ic className="h-4 w-4 text-brand-400" />
+            </div>
+            <div className="font-mono text-3xl font-bold tracking-tight text-white">{n}</div>
+            <div className="mt-1 text-sm font-medium text-slate-400">{l}</div>
           </div>
         ))}
       </div>

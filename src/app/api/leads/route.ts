@@ -37,12 +37,17 @@ function mapToLead(l: {
 }
 
 export async function GET() {
-  const rows = await prisma.lead.findMany({
-    orderBy: { createdAt: "desc" },
-    include: { budget: true },
-  });
-  const leads: Lead[] = rows.map(mapToLead);
-  return NextResponse.json({ leads });
+  try {
+    const rows = await prisma.lead.findMany({
+      orderBy: { createdAt: "desc" },
+      include: { budget: true },
+    });
+    const leads: Lead[] = rows.map(mapToLead);
+    return NextResponse.json({ leads });
+  } catch (err) {
+    console.error("[GET /api/leads]", err);
+    return NextResponse.json({ leads: [], error: "Erro ao buscar leads" }, { status: 500 });
+  }
 }
 
 type LeadPostBody = Partial<Lead> & {
@@ -58,40 +63,44 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "name e phone são obrigatórios" }, { status: 400 });
   }
 
-  const lead = await prisma.lead.create({
-    data: {
-      name: body.name,
-      phone: body.phone,
-      budget: {
-        create: {
-          journey: {
-            step: body.step ?? 7,
-            city: body.city,
-            uf: body.uf,
-            contract: body.contractType,
-            beneficiaries: body.beneficiaries,
+  try {
+    const lead = await prisma.lead.create({
+      data: {
+        name: body.name,
+        phone: body.phone,
+        budget: {
+          create: {
+            journey: {
+              step: body.step ?? 7,
+              city: body.city,
+              uf: body.uf,
+              contract: body.contractType,
+              beneficiaries: body.beneficiaries,
+            },
+            completedJourney: body.completed ?? false,
+            journeyDuration: body.durationSec ?? null,
+            city: body.city ?? "—",
+            neighborhood: body.neighborhood && body.neighborhood !== "—" ? body.neighborhood : null,
+            uf: body.uf ?? "MG",
+            leadAge: body.age || null,
+            contractType: body.contractType ?? null,
+            beneficiaries: body.beneficiaries ? (body.beneficiaries as object[]) : undefined,
+            device: (body.device ?? "desktop") as "mobile" | "desktop" | "tablet",
+            browser: body.browser ?? null,
+            os: body.os ?? null,
+            selectedPlan: body.selectedPlan ?? null,
+            selectedOperator: body.selectedOperator ?? null,
+            selectedPrice: body.selectedPrice ?? null,
+            plans: body.plans ? (body.plans as object[]) : undefined,
+            proposalGenerated: body.proposalGenerated ?? false,
           },
-          completedJourney: body.completed ?? false,
-          journeyDuration: body.durationSec ?? null,
-          city: body.city ?? "—",
-          neighborhood: body.neighborhood && body.neighborhood !== "—" ? body.neighborhood : null,
-          uf: body.uf ?? "MG",
-          leadAge: body.age || null,
-          contractType: body.contractType ?? null,
-          beneficiaries: body.beneficiaries ? (body.beneficiaries as object[]) : undefined,
-          device: (body.device ?? "desktop") as "mobile" | "desktop" | "tablet",
-          browser: body.browser ?? null,
-          os: body.os ?? null,
-          selectedPlan: body.selectedPlan ?? null,
-          selectedOperator: body.selectedOperator ?? null,
-          selectedPrice: body.selectedPrice ?? null,
-          plans: body.plans ? (body.plans as object[]) : undefined,
-          proposalGenerated: body.proposalGenerated ?? false,
         },
       },
-    },
-    include: { budget: true },
-  });
-
-  return NextResponse.json({ ok: true, lead: mapToLead(lead) }, { status: 201 });
+      include: { budget: true },
+    });
+    return NextResponse.json({ ok: true, lead: mapToLead(lead) }, { status: 201 });
+  } catch (err) {
+    console.error("[POST /api/leads]", err);
+    return NextResponse.json({ error: "Erro ao salvar lead" }, { status: 500 });
+  }
 }
